@@ -1,18 +1,75 @@
-<script>
-let name = document.location.pathname.slice(1);
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>YELP...ington!</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-if (!name) {
-  console.log("no place name specfied");
-} else {
-  console.log("fetching place named '" + name + "'");
+  <body>
+    <h1>Yelp...ington!</h1>
+    <div id="map"></div>
 
-  fetch(name + '.json')
-    .then(function (response) {
-      return response.text();
-    })
-    .then(function (myText) {
-      console.log(myText);
-    });
-}
+    <script>
+      
+      let name = document.location.pathname.slice(1);
 
-</script>
+      if (!name) {
+        console.log("no place name specfied");
+      } else {
+        console.log("fetching place named '" + name + "'");
+
+        fetch(name + ".json")
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(myText) {
+            console.log(myText);
+          });
+      }
+      
+      let getLatLong = function(address) { 
+        fetch(`https://nominatim.openstreetmap.org/search/?q=${address}&format=json`) // fetching address from nominatim
+        .then(function(yeet){ // yeet converts the fetched address to .json
+          return yeet.json(); 
+        })
+        .then(function(squag) { 
+          let lat = squag[0].lat 
+          let lon = squag[0].lon
+          return [lat, lon];
+          // console.log(getLatLong("131 Crescent St. Rutland, VT"))
+        })                    // squag returns the latitude + longitude from the .json array 
+        .then(function(squagArray) {
+          L.marker(squagArray).addTo(map)
+        })
+      }
+        getLatLong("182 Main Street Burlington, VT")
+
+
+        //fetch all.json
+        //iterates over array --> forEach
+        //fetches with each array the specific .json file
+        //pull target 
+
+      var map = L.map("map").setView([44.4759, -73.2121], 15);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var marker = L.marker([])
+        .addTo(map)
+        // .bindPopup("A pretty CSS3 popup.<br> Easily customizable.")
+        .openPopup();
+    </script>
+  </body>
+</html>
